@@ -1,20 +1,43 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { View, SafeAreaView, ActivityIndicator } from "react-native"
+import Header from "./components/header"
+import StartGame from "./screens/start-game"
+import GameScreen from "./screens/game-screen"
+import { useFonts } from "expo-font"
+import { styles } from "./styles"
+import theme from "./constants/theme"
+import { useState } from "react"
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    const [userNumber, setUserNumber] = useState()
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+    const [loaded] = useFonts({
+        germania: require("./assets/fonts/GermaniaOne-Regular.ttf"),
+    })
+
+    if (!loaded) {
+        return <ActivityIndicator size="large" color={theme.colors.primary} />
+    }
+
+    const onStartGame = (selectedNumber) => {
+        setUserNumber(selectedNumber)
+    }
+
+    const onBackToStartGame = () => {
+        setUserNumber()
+    }
+
+    let content = <StartGame onStartGame={onStartGame} />
+
+    if (userNumber) {
+        content = <GameScreen userOption={userNumber} onBack={onBackToStartGame} />
+    }
+
+    return (
+        <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
+                <Header title="Guess the Number" />
+                {content}
+            </View>
+        </SafeAreaView>
+    )
+}
