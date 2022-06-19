@@ -6,30 +6,45 @@ import { useFonts } from "expo-font"
 import { styles } from "./styles"
 import theme from "./constants/theme"
 import { useState } from "react"
+import GameOverScreen from "./screens/game-over"
 
 export default function App() {
     const [userNumber, setUserNumber] = useState()
+    const [guessRounds, setGuessRounds] = useState(0)
 
     const [loaded] = useFonts({
-        germania: require("./assets/fonts/GermaniaOne-Regular.ttf"),
+        Germania: require("./assets/fonts/GermaniaOne-Regular.ttf"),
     })
 
     if (!loaded) {
         return <ActivityIndicator size="large" color={theme.colors.primary} />
     }
 
+    const handleGameOver = (rounds) => {
+        setGuessRounds(rounds)
+    }
+
+    const handleRestartGame = () => {
+        setGuessRounds(0)
+        setUserNumber(null)
+    }
+
     const onStartGame = (selectedNumber) => {
         setUserNumber(selectedNumber)
+        setGuessRounds(0)
     }
 
     const onBackToStartGame = () => {
-        setUserNumber()
+        setUserNumber(null)
+        setGuessRounds(0)
     }
 
     let content = <StartGame onStartGame={onStartGame} />
 
-    if (userNumber) {
-        content = <GameScreen userOption={userNumber} onBack={onBackToStartGame} />
+    if (userNumber && guessRounds <= 0) {
+        content = <GameScreen userOption={userNumber} onBack={onBackToStartGame} onGameOver={handleGameOver} />
+    } else if (guessRounds > 0) {
+        content = <GameOverScreen rounds={guessRounds} onRestart={handleRestartGame} choise={userNumber} />
     }
 
     return (

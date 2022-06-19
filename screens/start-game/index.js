@@ -1,4 +1,4 @@
-import { View, Button, TouchableWithoutFeedback, Keyboard } from "react-native"
+import { View, Button, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from "react-native"
 import { Card, CustomText, Input, NumberContainer } from "../../components"
 import { styles } from "./styles"
 import theme from "../../constants/theme"
@@ -37,31 +37,35 @@ const StartGame = ({ onStartGame }) => {
     ) : null
 
     return (
-        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-            <View style={styles.container}>
-                <CustomText style={styles.title}>Start Game</CustomText>
-                <Card style={styles.inputContainer}>
-                    <CustomText style={styles.subtitle}>Select Number</CustomText>
-                    <Input
-                        placeholder="99"
-                        keyboardType="numeric"
-                        placeholderTextColor={theme.colors.placeholder}
-                        maxLength={2}
-                        blurOnSubmit
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        style={styles.input}
-                        value={enteredValue}
-                        onChangeText={(text) => onHandlerChangeText(text)}
-                    />
-                    <View style={styles.buttonContainer}>
-                        <Button title="Clear" color={theme.colors.secondary} onPress={() => onHandlerReset()} />
-                        <Button title="Confirm" color={theme.colors.secondary} onPress={() => onHandlerConfirm()} />
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.containerKeyboard}>
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+                <ScrollView style={styles.containerGeneric}>
+                    <View style={styles.container}>
+                        <CustomText style={styles.title}>Start Game</CustomText>
+                        <Card style={styles.inputContainer}>
+                            <CustomText style={styles.subtitle}>Select Number</CustomText>
+                            <Input
+                                placeholder="99"
+                                keyboardType="numeric"
+                                placeholderTextColor={theme.colors.placeholder}
+                                maxLength={2}
+                                blurOnSubmit
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                style={styles.input}
+                                value={enteredValue}
+                                onChangeText={(text) => onHandlerChangeText(text)}
+                            />
+                            <View style={styles.buttonContainer}>
+                                <Button title="Clear" color={theme.colors.secondary} onPress={() => onHandlerReset()} />
+                                <Button title="Confirm" color={theme.colors.secondary} onPress={() => onHandlerConfirm()} />
+                            </View>
+                        </Card>
+                        {confirmedOutput}
                     </View>
-                </Card>
-                {confirmedOutput}
-            </View>
-        </TouchableWithoutFeedback>
+                </ScrollView>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     )
 }
 
